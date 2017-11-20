@@ -274,6 +274,7 @@ export class CodebasesComponent implements OnDestroy, OnInit {
           this.codebases.unshift({} as Codebase); // Add empty object for row header
           this.applyFilters(this.appliedFilters);
         }
+        // re-fetch Che state to have consistent information inside all related components:
         this.startIdleChe();
       }, error => {
         this.handleError("Failed to retrieve codebases", NotificationType.DANGER);
