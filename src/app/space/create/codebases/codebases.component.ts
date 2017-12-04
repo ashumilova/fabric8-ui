@@ -51,7 +51,6 @@ export class CodebasesComponent implements OnDestroy, OnInit {
       private cheService: CheService,
       private codebasesService: CodebasesService,
       private contexts: Contexts,
-      private datePipe: DatePipe,
       private gitHubService: GitHubService,
       private notifications: Notifications,
       private authenticationService: AuthenticationService,
@@ -127,9 +126,20 @@ export class CodebasesComponent implements OnDestroy, OnInit {
         }],
         moreActions: []
       } as ActionConfig,
-      title: 'GitHub Disconnected',
-      info: 'You must be connected to GitHub in order to connect or create a Codebase'
+      iconStyleClass: 'pficon-add-circle-o',
+      title: 'Add a Codebase',
+      info: 'Add a Codebase from your GitHub account in order to start a Workspace.'
     } as EmptyStateConfig;
+
+    this.listConfig = {
+      dblClick: false,
+      emptyStateConfig: this.emptyStateConfig,
+      headingRow: true,
+      multiSelect: false,
+      selectItems: false,
+      showCheckbox: false,
+      useHeading: true
+    } as ListConfig;
   }
 
   // Actions
@@ -167,12 +177,6 @@ export class CodebasesComponent implements OnDestroy, OnInit {
 
     if (filter.field.id === 'name') {
       match = codebase.name.match(filter.value) !== null;
-    } else if (filter.field.id === 'createdAt') {
-      let date = this.datePipe.transform(codebase.gitHubRepo.createdAt, 'medium');
-      match = date.match(filter.value) !== null;
-    } else if (filter.field.id === 'pushedAt') {
-      let date = this.datePipe.transform(codebase.gitHubRepo.pushedAt, 'medium');
-      match = date.match(filter.value) !== null;
     }
     return match;
   }
@@ -202,10 +206,10 @@ export class CodebasesComponent implements OnDestroy, OnInit {
 
     if (this.currentSortField.id === 'name') {
       compValue = codebase1.name.localeCompare(codebase2.name);
-    } else if (this.currentSortField.id === 'createdAt') {
-      let date1 = new Date(codebase1.gitHubRepo.createdAt); // 2011-04-07T10:12:58Z
-      let date2 = new Date(codebase2.gitHubRepo.createdAt);
-      compValue = (date1 > date2) ? 1 : -1;
+    } else if (this.currentSortField.id === 'branches') {
+      compValue = codebase1.gitHubRepo.branchesCount - codebase2.gitHubRepo.branchesCount;
+    } else if (this.currentSortField.id === 'pullRequests') {
+      compValue = codebase1.gitHubRepo.pullRequestsCount - codebase2.gitHubRepo.pullRequestsCount;
     } else if (this.currentSortField.id === 'pushedAt') {
       let date1 = new Date(codebase1.gitHubRepo.pushedAt);
       let date2 = new Date(codebase2.gitHubRepo.pushedAt);

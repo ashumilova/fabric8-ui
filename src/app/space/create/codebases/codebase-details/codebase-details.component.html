@@ -1,0 +1,50 @@
+<div class="toolbar-header">
+  <pfng-toolbar
+    id="codebase-toolbar"
+    [config]="toolbarConfig"
+    [actionTemplate]="navigation"
+    [viewTemplate]="codebaseActions"
+    (onFilterChange)="filterChange($event)"
+    (onSortChange)="sortChange($event)">
+
+    <ng-template #codebaseActions>
+      <a class="btn btn-default btn-lg margin-right-20" [href]="[codebase.url]" target="_blank">Open in Github</a>
+      <span class="dropdown dropdown-kebab-pf" dropdown>
+        <button class="btn btn-link dropdown-toggle" type="button" dropdownToggle>
+          <span class="fa fa-ellipsis-v"></span>
+        </button>
+        <ul class="dropdown-menu-right dropdown-menu" aria-labelledby="dropdownKebab" *dropdownMenu>
+          <li [attr.role]="menuitem">
+            <a href="javascript:void(0)" class="dropdown-item secondary-action"
+               (click)="confirmDeleteCodebase($event)">Remove this Codebase</a>
+          </li>
+        </ul>
+      </span>
+    </ng-template>
+    <ng-template #navigation class="codebase-navigation">
+      <a [routerLink]="['/', context.user.attributes.username, context.space.attributes.name, 'create']" class="margin-right-10">Codebases</a>
+      <span class="margin-right-10">></span>
+      <span>{{codebase.name}}</span>
+    </ng-template>
+  </pfng-toolbar>
+</div>
+
+<div class="col-md-12">
+  <tabset>
+    <!-- Setting active to false forces the select event on startup to load branches -->
+    <tab>
+      <ng-template tabHeading><i class="fa fa-code-fork margin-right-5"></i>Branches</ng-template>
+      <codebase-branches [codebase]="codebase"></codebase-branches>
+    </tab>
+    <tab>
+      <ng-template tabHeading><i class="fa fa-cube margin-right-5"></i>Workspaces</ng-template>
+      <codebase-workspaces [codebase]="codebase"></codebase-workspaces>
+    </tab>
+  </tabset>
+</div>
+
+<modal #deleteCodebaseDialog title="Remove codebase">
+  <modal-content>
+    <codebase-delete-dialog [host]="deleteCodebaseDialog" [codebase]="codebase" (onDelete)="onDeleteCodebase($event)"></codebase-delete-dialog>
+  </modal-content>
+</modal>

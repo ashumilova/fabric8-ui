@@ -52,4 +52,6 @@ export class GitHubRepo {
   fullName?: string;
   htmlUrl?: string;
   pushedAt?: string;
+  branchesCount?: number;
+  pullRequestsCount?: number;
 }

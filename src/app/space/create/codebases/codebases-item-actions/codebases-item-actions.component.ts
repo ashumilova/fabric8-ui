@@ -1,15 +1,17 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { Broadcaster, Notification, Notifications, NotificationType } from 'ngx-base';
+import { Contexts } from 'ngx-fabric8-wit';
+
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Dialog } from 'ngx-widgets';
 import { Subscription } from 'rxjs';
 
-import { CodebaseDeleteDialogComponent } from '../codebases-delete/codebase-delete-dialog.component';
 import { Codebase } from '../services/codebase';
 import { CodebasesService } from '../services/codebases.service';
-import { WindowService } from '../services/window.service';
-import { WorkspacesService } from '../services/workspaces.service';
+
+import { Observable } from 'rxjs/Observable';
+
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -26,12 +28,12 @@ export class CodebasesItemActionsComponent implements OnDestroy, OnInit {
   subscriptions: Subscription[] = [];
   workspaceBusy: boolean = false;
   dialog: Dialog;
+  contextPath: Observable<string>;
 
   constructor(
+      private context: Contexts,
       private broadcaster: Broadcaster,
       private notifications: Notifications,
-      private windowService: WindowService,
-      private workspacesService: WorkspacesService,
       private codebasesService: CodebasesService) {
   }
 
@@ -42,38 +44,10 @@ export class CodebasesItemActionsComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
+    this.contextPath = this.context.current.map(context => context.path);
   }
 
   // Actions
-
-  /**
-   * Create workspace and open in editor
-   */
-  createAndOpenWorkspace(): void {
-    this.workspaceBusy = true;
-    this.subscriptions.push(this.workspacesService.createWorkspace(this.codebase.id)
-      .subscribe(workspaceLinks => {
-        this.workspaceBusy = false;
-        if (workspaceLinks != undefined) {
-          let name = this.getWorkspaceName(workspaceLinks.links.open);
-          this.windowService.open(workspaceLinks.links.open, name);
-
-          this.notifications.message({
-            message: `Workspace created!`,
-            type: NotificationType.SUCCESS
-          } as Notification);
-
-          // Poll for new workspaces
-          this.broadcaster.broadcast('workspaceCreated', {
-            codebase: this.codebase,
-            workspaceName: name
-          });
-        }
-      }, error => {
-        this.workspaceBusy = false;
-        this.handleError('Failed to create workspace', NotificationType.DANGER);
-      }));
-  }
 
   /**
    * Confirmation dialog for codebase removal.
@@ -107,7 +81,6 @@ export class CodebasesItemActionsComponent implements OnDestroy, OnInit {
   }
 
   // Private
-
   /**
    * Get the worksapce name from given URL
    *

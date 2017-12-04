@@ -1,0 +1,40 @@
+<div class="workspaces-page">
+  <div class="codebase-details-toolbar">
+    <codebase-workspaces-toolbar
+      (onFilterChange)="filterChange($event)"
+      (onSortChange)="sortChange($event)"
+      [resultsCount]="resultsCount"
+      [workspacesCount]="workspacesCount"></codebase-workspaces-toolbar>
+  </div>
+
+  <div class="col-md-12 padding-0">
+    <pfng-list
+      *ngIf="resultsCount > 0 || workspacesCount === 0"
+      [actionTemplate]="actionTemplate"
+      [config]="listConfig"
+      [items]="resultWorkspaces"
+      [itemHeadingTemplate]="itemHeadingTemplate"
+      [itemTemplate]="itemTemplate">
+      <ng-template #itemHeadingTemplate let-item="item">
+        <div class="list-pf-content-wrapper">
+          <div class="list-pf-main-content">
+            <div class="list-pf-title">WORKSPACES</div>
+            <div class="list-pf-description">BRANCHES</div>
+            <div class="list-pf-description"><!--behind--></div>
+            <div class="list-pf-description"><!--ahead--></div>
+            <div class="list-pf-description"><!--updated--></div>
+            <div class="list-pf-description"><!--status--></div>
+          </div>
+          <div class="list-pf-additional-content">
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #itemTemplate let-item="item" let-index="index">
+        <codebase-workspaces-item [workspace]="item"></codebase-workspaces-item>
+      </ng-template>
+      <ng-template #actionTemplate let-item="item" let-index="index">
+        <workspaces-item-actions [workspace]="item"></workspaces-item-actions>
+      </ng-template>
+    </pfng-list>
+  </div>
+</div>

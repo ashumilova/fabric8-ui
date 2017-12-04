@@ -4,26 +4,44 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { By } from '@angular/platform-browser';
 
+import { MomentModule } from 'angular2-moment';
+
 import { Broadcaster, Notifications } from 'ngx-base';
 import { Observable } from 'rxjs';
 
 import { GitHubService } from '../services/github.service';
-import { expectedGitHubRepoDetails } from '../services/github.service.mock';
+import { ContextsMock, expectedGitHubRepoDetails } from '../services/github.service.mock';
 import { CodebasesItemComponent } from './codebases-item.component';
+
+import { Contexts } from 'ngx-fabric8-wit';
 
 describe('Codebases Item Component', () => {
   let broadcasterMock: any;
+  let gitHubServiceMock: any;
+  let notificationMock: any;
   let fixture, codebases, codebase;
 
   beforeEach(() => {
     broadcasterMock = jasmine.createSpyObj('Broadcaster', ['on']);
+    gitHubServiceMock = jasmine.createSpyObj('GitHubService', ['getRepoDetailsByUrl', 'getRepoBranchesCountByUrl',
+      'getRepoPullRequestsCountByUrl']);
+    notificationMock = jasmine.createSpyObj('Notifications', ['message']);
 
     TestBed.configureTestingModule({
-      imports: [FormsModule, HttpModule],
+      imports: [FormsModule, HttpModule, MomentModule],
       declarations: [CodebasesItemComponent],
       providers: [
         {
           provide: Broadcaster, useValue: broadcasterMock
+        },
+        {
+          provide: Contexts, useClass: ContextsMock
+        },
+        {
+          provide: GitHubService, useValue: gitHubServiceMock
+        },
+        {
+          provide: Notifications, useValue: notificationMock
         }
       ],
       // Tells the compiler not to error on unknown elements and attributes
@@ -61,6 +79,11 @@ describe('Codebases Item Component', () => {
       'name': 'https://github.com/fabric8-services/fabric8-wit',
       'url': 'https///github.com/fabric8-services/fabric8-wit'
     };
+
+    gitHubServiceMock.getRepoDetailsByUrl.and.returnValue(Observable.of(expectedGitHubRepoDetails));
+    gitHubServiceMock.getRepoBranchesCountByUrl.and.returnValue(Observable.of(10));
+    gitHubServiceMock.getRepoPullRequestsCountByUrl.and.returnValue(Observable.of(2));
+
     fixture = TestBed.createComponent(CodebasesItemComponent);
   });
 

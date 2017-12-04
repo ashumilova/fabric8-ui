@@ -271,6 +271,23 @@ describe('Github: GitHubService', () => {
     });
   });
 
+  it('Get GitHub repo branches for given full name', () => {
+    // given
+    mockService.connections.subscribe((connection: any) => {
+      connection.mockRespond(new Response(
+        new ResponseOptions({
+          body: JSON.stringify(expectedGitHubRepoLicense),
+          status: 200
+        })
+      ));
+    });
+    // when
+    ghService.getRepoLicenseByName('fabric8-services/fabric8-wit').subscribe((data: any) => {
+      // then
+      expect(data.sha).toEqual(expectedGitHubRepoLicense.sha);
+    });
+  });
+
   it('Get GitHub repo license for given full name in error', () => {
     // given
     mockService.connections.subscribe((connection: any) => {

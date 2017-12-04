@@ -11,9 +11,9 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
+import { SortConfig, SortEvent, ToolbarConfig } from 'patternfly-ng/';
 import { FilterConfig, FilterEvent, FilterField } from 'patternfly-ng/filter';
-import { SortConfig, SortEvent } from 'patternfly-ng/sort';
-import { ToolbarConfig } from 'patternfly-ng/toolbar';
+
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -37,11 +37,11 @@ export class CodebasesToolbarComponent implements OnChanges, OnInit {
   constructor() {
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+ /* ngOnChanges(changes: SimpleChanges): void {
     if (changes.resultsCount && this.filterConfig) {
       this.filterConfig.resultsCount = changes.resultsCount.currentValue;
     }
-  }
+  }*/
 
   // Initialization
 
@@ -90,6 +90,20 @@ export class CodebasesToolbarComponent implements OnChanges, OnInit {
       filterConfig: this.filterConfig,
       sortConfig: this.sortConfig
     } as ToolbarConfig;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const resultsCount = changes.resultsCount;
+    if (resultsCount) {
+      this.resultsCount = resultsCount.currentValue || 0;
+      this.updateResultsCount();
+    }
+  }
+
+  updateResultsCount(): void {
+    if (this.filterConfig) {
+      this.filterConfig.resultsCount = this.resultsCount;
+    }
   }
 
   // Actions

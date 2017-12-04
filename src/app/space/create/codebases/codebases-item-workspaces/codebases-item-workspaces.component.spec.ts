@@ -62,7 +62,6 @@ describe('Codebases Item Details Component', () => {
     };
     workspacesServiceMock.getWorkspaces.and.returnValue(Observable.of(expectedWorkspaces));
     broadcasterMock.on.and.returnValue(Observable.of(workspaceCreatedEvent));
-    spyOn(comp, 'updateWorkspacesPoll');
   });
 
   it('Init component fetches workspaces', async(() => {

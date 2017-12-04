@@ -111,9 +111,9 @@ import { AddSpaceOverlayModule } from './space/add-space-overlay/add-space-overl
 import { AboutModalModule } from './layout/about-modal/about-modal.module';
 
 import { GettingStartedService } from './getting-started/services/getting-started.service';
+import { CodebaseResolver } from './shared/codebase-resolver';
 import { RavenExceptionHandler } from './shared/exception.handler';
 import { ForgeWizardModule } from './space/forge-wizard/forge-wizard.module';
-
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -188,6 +188,7 @@ export type StoreType = {
     AuthGuard,
     AuthUserResolve,
     BrandingService,
+    CodebaseResolver,
     CollaboratorService,
     ConfigStore,
     ContextCurrentUserGuard,

@@ -13,9 +13,8 @@
             [config]="listConfig"
             [items]="codebases"
           [itemHeadingTemplate]="itemHeadingTemplate"
-            [itemTemplate]="itemTemplate"
-            [expandTemplate]="expandTemplate"
-            (onActionSelect)="openAddCodebasePanel()">
+          [itemTemplate]="itemTemplate"
+          (onActionSelect)="openAddCodebasePanel()">
         <ng-template #itemHeadingTemplate let-item="item">
           <codebases-item-heading [cheState]="cheState" class="codebase-item"></codebases-item-heading>
         </ng-template>
@@ -27,13 +26,10 @@
           <span class="margin-right-5"></span>
         </ng-template>
         <ng-template #actionTemplate let-item="item" let-index="index" class="codebase-item">
-            <codebases-item-actions [cheRunning]="cheState && cheState.running" [codebase]="item" [index]="index"></codebases-item-actions>
-          </ng-template>
-          <ng-template #expandTemplate let-item="item" let-index="index">
-            <codebases-item-details [codebase]="item"></codebases-item-details>
-          </ng-template>
-        </pfng-list>
-      </div>
+          <codebases-item-actions [cheRunning]="cheState && cheState.running" [codebase]="item" [index]="index"></codebases-item-actions>
+        </ng-template>
+      </pfng-list>
+    </div>
     </div>
   </div>
 </ng-container>

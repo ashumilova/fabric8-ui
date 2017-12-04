@@ -1,0 +1,42 @@
+<div class="branches-page">
+  <div class="codebase-details-toolbar">
+    <codebase-branches-toolbar
+      (onFilterChange)="filterChange($event)"
+      (onSortChange)="sortChange($event)"
+      [resultsCount]="resultsCount"
+      [branchesCount]="branchesCount"></codebase-branches-toolbar>
+  </div>
+  <div class="col-md-12 padding-0">
+    <pfng-list
+      *ngIf="resultsCount > 0 || branchesCount === 0"
+      [actionTemplate]="actionTemplate"
+      [config]="listConfig"
+      [items]="resultBranches"
+      [itemHeadingTemplate]="itemHeadingTemplate"
+      [itemTemplate]="itemTemplate">
+      <ng-template #itemHeadingTemplate let-item="item">
+        <div class="list-pf-content-wrapper">
+          <div class="list-pf-main-content">
+            <div class="list-pf-title">BRANCHES</div>
+            <div class="list-pf-description">WORKSPACES</div>
+            <div class="list-pf-description"><!--behind--></div>
+            <div class="list-pf-description"><!--ahead--></div>
+            <div class="list-pf-description"><!--updated--></div>
+            <div class="list-pf-description"><!--status--></div>
+          </div>
+          <div class="list-pf-additional-content">
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #itemTemplate let-item="item" let-index="index">
+        <codebase-branches-item [branch]="item"></codebase-branches-item>
+      </ng-template>
+      <ng-template #actionTemplate let-item="item" let-index="index">
+        <!--<workspaces-branches-actions [workspace]="item"></workspaces-branches-actions>-->
+      </ng-template>
+    </pfng-list>
+  </div>
+</div>
+
+
+

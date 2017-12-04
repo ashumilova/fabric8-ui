@@ -1,0 +1,8 @@
+<pfng-toolbar #toolbar
+              [config]="toolbarConfig"
+              (onFilterChange)="filterChange($event)"
+              (onSortChange)="sortChange($event)">
+</pfng-toolbar>
+
+<branch-not-found *ngIf="branchesCount > 0 && resultsCount === 0"
+                     (onClearAllFilters)="toolbar.clearFilter()"></branch-not-found>

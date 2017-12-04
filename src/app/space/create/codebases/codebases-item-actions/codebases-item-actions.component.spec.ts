@@ -3,17 +3,22 @@ import { async, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-import { Broadcaster, Notifications } from 'ngx-base';
-import { ModalDirective, ModalModule } from 'ngx-bootstrap/modal';
-import { Observable } from 'rxjs';
+import { Contexts } from 'ngx-fabric8-wit';
 
+import { Broadcaster, Notifications } from 'ngx-base';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { Observable } from 'rxjs';
 import { CodebasesService } from '../services/codebases.service';
 import { GitHubService } from '../services/github.service';
 import { WindowService } from '../services/window.service';
 import { WorkspacesService } from '../services/workspaces.service';
 import { CodebasesItemActionsComponent } from './codebases-item-actions.component';
 
+import { ContextsMock } from '../services/github.service.mock';
+
+
 describe('Codebases Item Actions Component', () => {
+  let contextsMock: any;
   let dialogMock: any;
   let gitHubServiceMock: any;
   let notificationMock: any;
@@ -24,6 +29,7 @@ describe('Codebases Item Actions Component', () => {
   let codebasesServiceMock: any;
 
   beforeEach(() => {
+    contextsMock = jasmine.createSpy('Contexts');
     gitHubServiceMock = jasmine.createSpy('GitHubService');
     dialogMock = jasmine.createSpyObj('bs-modal', ['show', 'hide']);
     notificationMock = jasmine.createSpyObj('Notifications', ['message']);
@@ -38,6 +44,9 @@ describe('Codebases Item Actions Component', () => {
       providers: [
         {
           provide: Broadcaster, useValue: broadcasterMock
+        },
+        {
+          provide: Contexts, useClass: ContextsMock
         },
         {
           provide: WindowService, useValue: windowServiceMock
@@ -101,7 +110,6 @@ describe('Codebases Item Actions Component', () => {
     // then
     expect(notificationMock.message).toHaveBeenCalled();
   }));
-
 
   it('Delete codebase successfully', async(() => {
     // given
