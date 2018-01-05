@@ -14,7 +14,7 @@ import { Notification, NotificationType, Notifications } from 'ngx-base';
 
 import { Codebase } from '../services/codebase';
 import { CodebasesService } from '../services/codebases.service';
-import { GitHubRepoDetails } from "../services/github";
+import { GitHubRepoDetails } from '../services/github';
 import { GitHubService } from '../services/github.service';
 import { removeAction } from '../../../../app-routing.module';
 

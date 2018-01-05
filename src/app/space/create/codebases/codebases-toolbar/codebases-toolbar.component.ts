@@ -1,9 +1,9 @@
 import {
   Component,
   EventEmitter,
-  Input,
+  Input, OnChanges,
   OnInit,
-  Output,
+  Output, SimpleChanges,
   TemplateRef,
   ViewChild,
   ViewEncapsulation
@@ -24,7 +24,7 @@ import {
   templateUrl: './codebases-toolbar.component.html',
   styleUrls: ['./codebases-toolbar.component.less']
 })
-export class CodebasesToolbarComponent implements OnInit {
+export class CodebasesToolbarComponent implements OnInit, OnChanges {
   @Input() resultsCount: number = 0;
 
   @Output('onFilterChange') onFilterChange = new EventEmitter();
@@ -49,16 +49,6 @@ export class CodebasesToolbarComponent implements OnInit {
         title: 'Name',
         placeholder: 'Filter by Name...',
         type: 'text'
-      },{
-        id: 'createdAt',
-        title: 'Created Date',
-        placeholder: 'Filter by Created Date...',
-        type: 'text'
-      },{
-        id: 'pushedAt',
-        title: 'Last Commit',
-        placeholder: 'Filter by Last Commit Date...',
-        type: 'text'
       }] as FilterField[],
       appliedFilters: [],
       resultsCount: this.resultsCount,
@@ -71,11 +61,15 @@ export class CodebasesToolbarComponent implements OnInit {
         id: 'name',
         title:  'Name',
         sortType: 'alpha'
-      },{
-        id: 'createdAt',
-        title:  'Created Date',
+      }, {
+        id: 'branches',
+        title:  'Branches',
         sortType: 'numeric'
-      },{
+      }, {
+          id: 'pullRequests',
+          title:  'Pull Requests',
+          sortType: 'numeric'
+      }, {
         id: 'pushedAt',
         title:  'Last Commit',
         sortType: 'numeric'
@@ -87,6 +81,20 @@ export class CodebasesToolbarComponent implements OnInit {
       filterConfig: this.filterConfig,
       sortConfig: this.sortConfig
     } as ToolbarConfig;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const resultsCount = changes.resultsCount;
+    if (resultsCount) {
+      this.resultsCount = resultsCount.currentValue || 0;
+      this.updateResultsCount();
+    }
+  }
+
+  updateResultsCount(): void {
+    if (this.filterConfig) {
+      this.filterConfig.resultsCount = this.resultsCount;
+    }
   }
 
   // Actions

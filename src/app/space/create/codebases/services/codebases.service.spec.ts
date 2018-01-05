@@ -49,9 +49,12 @@ describe('Codebase: CodebasesService', () => {
     });
 
     const codebase = {
+      "id": "codebaseId",
       "attributes": {
         "type": "git",
-        "url": "https://github.com/fabric8-ui/fabric8-ui.git"
+        "url": "https://github.com/fabric8-ui/fabric8-ui.git",
+        "stackId": "stack",
+        "last_used_workspace": "workspace_name"
       },
       "type":"codebases"
     } as Codebase;
@@ -137,7 +140,7 @@ describe('Codebase: CodebasesService', () => {
       // TODO(corinne): do we want this name/url formatting for https clone?
       // formatting is also done in component CodebasesAddComponent
       expect(data[0].name).toEqual("https://github.com/airbnb/enzyme");
-      expect(data[0].url).toEqual("https///github.com/airbnb/enzyme");
+      expect(data[0].url).toEqual("https://github.com/airbnb/enzyme");
       expect(data[1].name).toEqual("fabric8-services/fabric8-wit");
       expect(data[1].url).toEqual("https://github.com/fabric8-services/fabric8-wit");
       expect(data[2].name).toEqual("http://something.com");
@@ -274,6 +277,41 @@ describe('Codebase: CodebasesService', () => {
         fail('Delete codebase in error');
       }, // then
       error => expect(error).toEqual(deleteError));
+  });
+
+  it('Get codebase information', () => {
+    const expectedData = cloneDeep(githubData);
+    expectedData.attributes.type = 'git';
+    expectedData.attributes.url = 'git@github.com:fabric8-services/fabric8-wit.git';
+    const expectedResponse = {'data': expectedData};
+    // given
+    mockService.connections.subscribe((connection: any) => {
+      connection.mockRespond(new Response(
+        new ResponseOptions({
+          body: JSON.stringify(expectedResponse),
+          status: 200
+        })
+      ));
+    });
+    // when
+    codebasesService.getCodebase(expectedData.id).subscribe((data: any) => {
+      // then
+      expect(data.url).toEqual('https://github.com/fabric8-services/fabric8-wit');
+      expect(data.name).toEqual('fabric8-services/fabric8-wit');
+    });
+  });
+
+  it('Get codebase information in error', () => {
+    let errorMessage = 'get codebase error';
+    // given
+    mockService.connections.subscribe((connection: any) => {
+      connection.mockError(new Error(errorMessage));
+    });
+    // when
+    codebasesService.getCodebase(codebase.id).subscribe((data: any) => {
+        fail(errorMessage);
+      }, // then
+      error => expect(error).toEqual(errorMessage));
   });
 
 

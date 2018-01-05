@@ -36,7 +36,7 @@ export class CodebasesItemDetailsComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    if (this.codebase == undefined || this.codebase.attributes.type !== 'git') {
+    if (this.codebase === undefined || this.codebase.attributes.type !== 'git') {
       return;
     }
     this.subscriptions.push(this.gitHubService.getRepoDetailsByUrl(this.codebase.attributes.url)

@@ -8,6 +8,7 @@ import { cloneDeep } from 'lodash';
 
 import { Context, Contexts } from 'ngx-fabric8-wit';
 import {
+  GitHubBranch,
   GitHubRepo,
   GitHubRepoBranch,
   GitHubRepoCommit,
@@ -30,6 +31,8 @@ export class GitHubService implements OnDestroy {
     'Content-Type': 'application/json',
     'Accept': 'application/vnd.github.v3+json'
   });
+
+  private static readonly LINK_HEADER = 'Link';
 
   private cache: Map<string, Observable<any>>;
   private context: Context;
@@ -154,6 +157,70 @@ export class GitHubService implements OnDestroy {
   getRepoDetailsByUrl(cloneUrl: string): Observable<GitHubRepoDetails> {
     let fullName = this.getFullName(cloneUrl);
     return this.getRepoDetailsByFullName(fullName);
+  }
+
+  getRepoBranchesCountByUrl(cloneUrl: string): Observable<number> {
+    let fullName = this.getFullName(cloneUrl);
+    return this.getRepoBranchesCount(fullName);
+  }
+
+  getRepoBranchesCount(fullName: string): Observable<number> {
+    console.log('getRepoBranchesCount');
+    let url = `${this.gitHubUrl}/repos/${fullName}/branches?per_page=1`;
+    if (this.cache.has(url)) {
+      return this.cache.get(url);
+    } else {
+      let res = this.getHeaders()
+        .switchMap(newHeaders => this.http
+          .get(url, { headers: newHeaders }))
+        .map(response => {
+          if (response.headers.has(GitHubService.LINK_HEADER)) {
+            return this.getLastPageNumber(response.headers.get(GitHubService.LINK_HEADER));
+          } else {
+            let branches = response.json() as GitHubBranch[];
+            return branches.length;
+          }
+        })
+        .publishReplay(1)
+        .refCount()
+        .catch((error) => {
+          return this.handleError(error);
+        });
+      this.cache.set(url, res);
+      return res;
+    }
+  }
+
+  getRepoPullRequestsCountByUrl(cloneUrl: string): Observable<number> {
+    let fullName = this.getFullName(cloneUrl);
+    return this.getRepoPullRequestsCount(fullName);
+  }
+
+  getRepoPullRequestsCount(fullName: string): Observable<number> {
+    console.log('getRepoPullRequestsCount');
+    let url = `${this.gitHubUrl}/repos/${fullName}/pulls?per_page=1`;
+    if (this.cache.has(url)) {
+      return this.cache.get(url);
+    } else {
+      let res = this.getHeaders()
+        .switchMap(newHeaders => this.http
+          .get(url, { headers: newHeaders }))
+        .map(response => {
+          if (response.headers.has(GitHubService.LINK_HEADER)) {
+            return this.getLastPageNumber(response.headers.get(GitHubService.LINK_HEADER));
+          } else {
+            let pulls = response.json() as GitHubBranch[];
+            return pulls.length;
+          }
+        })
+        .publishReplay(1)
+        .refCount()
+        .catch((error) => {
+          return this.handleError(error);
+        });
+      this.cache.set(url, res);
+      return res;
+    }
   }
 
   /**
@@ -336,7 +403,7 @@ export class GitHubService implements OnDestroy {
         .switchMap(newHeaders => this.http
           .get(url, { headers: newHeaders }))
         .map(response => {
-          return response.json() as GitHubRepo[]
+          return response.json() as GitHubRepo[];
         })
         .publishReplay(1)
         .refCount()
@@ -417,4 +484,21 @@ export class GitHubService implements OnDestroy {
     return Observable.throw(error.message || error);
   }
 
+  /**
+   * Retrieve the last page number from GitHub page
+   *
+   * @param {string} link
+   * @returns {number}
+   */
+  private getLastPageNumber(link: string): number {
+    let groups = link.match(/page=(\d+)>;\srel=\"last\"/);
+    if (groups.length > 1) {
+      try {
+        return parseInt(groups[1]);
+      } catch (e) {
+        // ignore invalid text values
+      }
+    }
+    return 0;
+  }
 }

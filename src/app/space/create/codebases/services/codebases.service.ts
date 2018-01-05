@@ -28,7 +28,7 @@ export class CodebasesService {
   }
 
   /**
-   * Add a codbase to the given space
+   * Add a codebase to the given space
    *
    * @param spaceId The ID associated with the given space
    * @param codebase The codebase to add
@@ -41,6 +41,27 @@ export class CodebasesService {
       .post(url, payload, { headers: this.headers })
       .map(response => {
         return response.json().data as Codebase;
+      })
+      .catch((error) => {
+        return this.handleError(error);
+      });
+  }
+
+
+  /**
+   * Get the codebase information.
+   *
+   * @param codebaseId The ID associated with the given codebase
+   * @returns {Observable<Codebase>}
+   */
+  getCodebase(codebaseId: string): Observable<Codebase> {
+    let url = `${this.codebasesUrl}/${codebaseId}`;
+    return this.http.get(url, { headers: this.headers })
+      .map((response) => {
+        let codebase = response.json().data as Codebase;
+        codebase.name = this.getName(codebase);
+        codebase.url = this.getUrl(codebase);
+        return codebase;
       })
       .catch((error) => {
         return this.handleError(error);
@@ -178,7 +199,8 @@ export class CodebasesService {
 
   private getUrl(codebase: Codebase): string {
     if (codebase.attributes.type === 'git') {
-      return codebase.attributes.url.replace('.git', '').replace(':', '/').replace('git@', 'https://');
+      return !codebase.attributes.url.startsWith('git@') ? codebase.attributes.url.replace('.git', '') :
+        codebase.attributes.url.replace('.git', '').replace(':', '/').replace('git@', 'https://');
     } else {
       return codebase.attributes.url;
     }

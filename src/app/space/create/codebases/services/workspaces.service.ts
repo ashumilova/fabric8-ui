@@ -34,7 +34,7 @@ export class WorkspacesService {
   createWorkspace(codebaseId: string): Observable<WorkspaceLinks> {
     let url = `${this.workspacesUrl}/${codebaseId}/create`;
     return this.http
-      .post(url, null, { headers: this.headers })
+      .post(url, {}, { headers: this.headers })
       .retry(8) // che-starter timeout is 3 min -- 30 sec default request timeout is not enough
       .map(response => {
         return response.json() as WorkspaceLinks;

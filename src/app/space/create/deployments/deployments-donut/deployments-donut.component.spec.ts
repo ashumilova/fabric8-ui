@@ -41,7 +41,11 @@ describe('DeploymentsDonutComponent', () => {
       } as Pods),
       getVersion: () => { throw 'NotImplemented'; },
       getCpuStat: (spaceId: string, envId: string) => { throw 'NotImplemented'; },
-      getMemoryStat: (spaceId: string, envId: string) => { throw 'NotImplemented'; }
+      getMemoryStat: (spaceId: string, envId: string) => { throw 'NotImplemented'; },
+      getAppUrl: () => { throw 'NotImplemented'; },
+      getConsoleUrl: () => { throw 'NotImplemented'; },
+      getLogsUrl: () => { throw 'NotImplemented'; },
+      deleteApplication: () => { throw 'NotImplemented'; }
     };
 
     TestBed.configureTestingModule({

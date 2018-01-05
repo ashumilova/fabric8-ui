@@ -263,3 +263,11 @@ export interface GitHubRepoBranch {
   'protected': boolean;
   'protection_url': string;
 }
+
+export class GitHubBranch {
+  'name': string;
+  'commit': {
+    'sha': string;
+    'url': string;
+  };
+}

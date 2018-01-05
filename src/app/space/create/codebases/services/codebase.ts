@@ -31,7 +31,7 @@ export class CodebaseRelations {
 export class RelationGeneric {
   data?: GenericData;
   links?: GenericLinks;
-  meta?: any
+  meta?: any;
 }
 
 export class GenericData {
@@ -50,4 +50,6 @@ export class GenericLinks {
 export class GitHubRepo {
   createdAt?: string;
   pushedAt?: string;
+  branchesCount?: number;
+  pullRequestsCount?: number;
 }

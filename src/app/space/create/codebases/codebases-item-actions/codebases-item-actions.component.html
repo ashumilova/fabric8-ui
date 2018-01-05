@@ -3,19 +3,16 @@
     <span class="fa fa-ellipsis-v"></span>
   </button>
   <ul class="dropdown-menu-right dropdown-menu" aria-labelledby="dropdownKebab" *dropdownMenu>
-    <li [ngClass]="{'disabled': workspaceBusy}"
-        [attr.role]="menuitem">
-      <a href="javascript:void(0)" class="dropdown-item secondary-action" *ngIf="!workspaceBusy"
-         (click)="createAndOpenWorkspace()">Create workspace</a>
-      <a href="javascript:void(0)" class="dropdown-item secondary-action" *ngIf="workspaceBusy"
-         tooltip="Waiting for Che..." disabled>Create workspace</a>
+    <li [attr.role]="menuitem">
+        <a [routerLink]="[contextPath | async, 'create', 'codebase', codebase.id]" class="dropdown-item secondary-action">View details</a>
     </li>
     <li [attr.role]="menuitem">
       <a href="javascript:void(0)" class="dropdown-item secondary-action"
-         (click)="confirmDeleteCodebase($event)">Remove codebase</a>
+           (click)="confirmDeleteCodebase($event)">Remove codebase</a>
     </li>
   </ul>
 </span>
+
 <modal #deleteCodebaseDialog title="Remove codebase">
   <modal-content>
     <codebase-delete-dialog [host]="deleteCodebaseDialog" [codebase]="codebase" (onDelete)="onDeleteCodebase($event)"></codebase-delete-dialog>

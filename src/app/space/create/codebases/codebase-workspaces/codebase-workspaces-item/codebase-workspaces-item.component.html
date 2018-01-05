@@ -1,0 +1,32 @@
+<div class="list-pf-content-wrapper">
+  <div class="list-pf-main-content">
+    <div class="list-pf-title">
+      {{workspace.attributes.name}}
+    </div>
+    <div class="list-pf-description">
+      <span class="fa fa-code-fork margin-right-10"></span>
+      <small>[todo]</small>
+    </div>
+    <div class="list-pf-description">
+      <span class="fa fa-arrow-down list-pf-icon workspace-icon-commits-behind"></span>
+      <b>[todo]</b>
+      <small>Behind</small>
+    </div>
+    <div class="list-pf-description">
+      <span class="fa fa-arrow-up list-pf-icon workspace-icon-commits-ahead"></span>
+      <b>[todo]</b>
+      <small>Ahead</small>
+    </div>
+    <div class="list-pf-description"><small>Updated [TODO]</small></div>
+    <div class="list-pf-description">
+      <span class="fa list-pf-icon" [ngClass]="{'fa-check workspace-icon-status-running': workspaceStatus ==='RUNNING',
+          'fa-pause-circle-o workspace-icon-status-stopped': workspaceStatus !== 'RUNNING'}"></span>
+      <small>{{workspace.attributes.description}}</small>
+    </div>
+  </div>
+  <div class="list-pf-additional-content">
+    <div class="button-section">
+      <a class="btn btn-default btn-lg pull-right" href="{{workspace.links.open}}" target="_blank">Start coding</a>
+    </div>
+  </div>
+</div>

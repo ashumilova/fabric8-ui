@@ -125,6 +125,7 @@ import { EventService } from './shared/event.service';
 import { Fabric8UISpaceNamespace } from './shared/runtime-console/fabric8-ui-space-namespace.service';
 import { GettingStartedService } from './getting-started/services/getting-started.service';
 import { ForgeWizardModule } from './space/forge-wizard/forge-wizard.module';
+import { CodebaseResolver } from './shared/codebase-resolver';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -197,6 +198,7 @@ export type StoreType = {
     AuthGuard,
     AuthUserResolve,
     BrandingService,
+    CodebaseResolver,
     CollaboratorService,
     ConfigStore,
     ContextCurrentUserGuard,

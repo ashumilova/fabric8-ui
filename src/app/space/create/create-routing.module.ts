@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CreateComponent } from './create.component';
 import { CodebasesComponent } from './codebases/codebases.component';
 import { ExperimentalFeatureResolver } from '../../shared/experimental-feature.resolver';
+import { CodebaseResolver } from '../../shared/codebase-resolver';
 
 const routes: Routes = [
   {
@@ -55,6 +56,18 @@ const routes: Routes = [
         data: {
           title: 'Deployments',
           featureName: 'Deployments'
+        }
+      },
+      // Codebase details
+      {
+        path: 'codebase/:codebase',
+        resolve: {
+          codebase: CodebaseResolver
+        },
+        loadChildren: './codebases/codebase-details/codebase-details.module#CodebaseDetailsModule',
+        data: {
+          title: 'Codebase',
+          featureName: 'Create'
         }
       }
     ]

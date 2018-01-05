@@ -5,6 +5,9 @@ import { Che } from '../services/che';
 import { Codebase } from '../services/codebase';
 import { GitHubService } from '../services/github.service';
 import { Notification, NotificationType, Notifications } from 'ngx-base';
+import { NotificationType as NotificationTypes } from 'patternfly-ng';
+import { Observable } from 'rxjs/Observable';
+import { Contexts } from 'ngx-fabric8-wit';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -18,11 +21,15 @@ export class CodebasesItemComponent implements OnDestroy, OnInit {
 
   createdDate: string;
   fullName: string;
+  branchesCount: number;
+  pullRequestsCount: number;
   lastCommitDate: string;
   htmlUrl: string;
   subscriptions: Subscription[] = [];
+  contextPath: Observable<string>;
 
   constructor(
+      private context: Contexts,
       private gitHubService: GitHubService,
       private notifications: Notifications) {
   }
@@ -34,6 +41,8 @@ export class CodebasesItemComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
+    this.contextPath = this.context.current.map(context => context.path);
+
     if (this.codebase === undefined || this.codebase.attributes === undefined) {
       return;
     }
@@ -77,6 +86,7 @@ export class CodebasesItemComponent implements OnDestroy, OnInit {
    * Helper to update GitHub repo details
    */
   private updateGitHubRepoDetails(): void {
+    this.codebase.gitHubRepo = {};
     this.subscriptions.push(this.gitHubService.getRepoDetailsByUrl(this.codebase.attributes.url)
       .subscribe(gitHubRepoDetails => {
         this.createdDate = gitHubRepoDetails.created_at;
@@ -85,11 +95,30 @@ export class CodebasesItemComponent implements OnDestroy, OnInit {
         this.htmlUrl = gitHubRepoDetails.html_url;
 
         // Save for filter
-        this.codebase.gitHubRepo = {};
         this.codebase.gitHubRepo.createdAt = gitHubRepoDetails.created_at;
         this.codebase.gitHubRepo.pushedAt = gitHubRepoDetails.pushed_at;
       }, error => {
         this.handleError(`Failed to retrieve GitHub repo: ${this.codebase.attributes.url}`, NotificationType.WARNING);
+      }));
+
+    this.subscriptions.push(this.gitHubService.getRepoBranchesCountByUrl(this.codebase.attributes.url)
+      .subscribe(count => {
+        this.branchesCount = count;
+        // Save for filter
+        this.codebase.gitHubRepo.branchesCount = count;
+      }, error => {
+        this.handleError(`Failed to retrieve GitHub repo branches information: ${this.codebase.attributes.url}`,
+          NotificationType.WARNING);
+      }));
+
+    this.subscriptions.push(this.gitHubService.getRepoPullRequestsCountByUrl(this.codebase.attributes.url)
+      .subscribe(count => {
+        this.pullRequestsCount = count;
+        // Save for filter
+        this.codebase.gitHubRepo.pullRequestsCount = count;
+      }, error => {
+        this.handleError(`Failed to retrieve GitHub repo pull requests information: ${this.codebase.attributes.url}`,
+          NotificationType.WARNING);
       }));
   }
 

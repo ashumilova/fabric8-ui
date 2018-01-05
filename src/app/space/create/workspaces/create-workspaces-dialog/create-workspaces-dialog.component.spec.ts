@@ -8,7 +8,7 @@ import {
 import {
   async,
   ComponentFixture,
-  TestBed,
+  TestBed
 } from '@angular/core/testing';
 
 import { TypeaheadModule } from 'ngx-bootstrap';

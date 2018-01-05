@@ -1,17 +1,15 @@
 import { CodebasesItemWorkspacesComponent } from './codebases-item-workspaces.component';
 import { Observable } from 'rxjs';
-import { NO_ERRORS_SCHEMA } from "@angular/core";
-import { By } from '@angular/platform-browser';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpModule } from '@angular/http';
-import { FormsModule, NgForm } from '@angular/forms';
-//import { ContextsMock, expectedGitHubRepoDetails, expectedGitHubRepoCommit, expectedGitHubRepoLicense } from '../services/github.service.mock';
-import { Broadcaster, Notifications, NotificationType } from 'ngx-base';
+import { FormsModule } from '@angular/forms';
+import { Broadcaster, Notifications } from 'ngx-base';
 import { WindowService } from '../services/window.service';
 import { WorkspacesService } from '../services/workspaces.service';
 import {
   async,
   ComponentFixture,
-  TestBed,
+  TestBed
 } from '@angular/core/testing';
 
 describe('Codebases Item Details Component', () => {
@@ -50,23 +48,22 @@ describe('Codebases Item Details Component', () => {
     });
     fixture = TestBed.createComponent(CodebasesItemWorkspacesComponent);
     comp = fixture.componentInstance;
-    comp.codebase = { "id": "6f5b6738-170e-490e-b3bb-d10f56b587c8", attributes: { type: 'git', url: "toto/toto", last_used_workspace: "me" } };
+    comp.codebase = { 'id': '6f5b6738-170e-490e-b3bb-d10f56b587c8', attributes: { type: 'git', url: 'toto/toto', last_used_workspace: 'me' } };
     expectedWorkspace = {
       attributes: {
         description: 'description',
         name: 'name'
       },
-      links: { open: "url" },
+      links: { open: 'url' },
       type: 'git'
     };
     expectedWorkspaces = [expectedWorkspace];
     const workspaceCreatedEvent = {
-      codebase: { "id": "6f5b6738-170e-490e-b3bb-d10f56b587c8", attributes: { type: 'git', url: "toto/toto" } },
-      workspaceName: "MyWorkspace"
+      codebase: { 'id': '6f5b6738-170e-490e-b3bb-d10f56b587c8', attributes: { type: 'git', url: 'toto/toto' } },
+      workspaceName: 'MyWorkspace'
     }
     workspacesServiceMock.getWorkspaces.and.returnValue(Observable.of(expectedWorkspaces));
     broadcasterMock.on.and.returnValue(Observable.of(workspaceCreatedEvent));
-    spyOn(comp, 'updateWorkspacesPoll');
   });
 
   it('Init component fetches workspaces', async(() => {
@@ -78,42 +75,5 @@ describe('Codebases Item Details Component', () => {
 
     // then
     expect(workspacesServiceMock.getWorkspaces).toHaveBeenCalled();
-    expect(comp.updateWorkspacesPoll).toHaveBeenCalled();
-    expect(broadcasterMock.on).toHaveBeenCalled();
-  }));
-
-  it('Create and open workspace', async(() => {
-    // given
-    workspacesServiceMock.createWorkspace.and.returnValue(Observable.of(expectedWorkspace));
-    const notificationAction = { name: "created" };
-    notificationMock.message.and.returnValue(Observable.of(notificationAction));
-    fixture.detectChanges();
-
-    // when
-    comp.createAndOpenWorkspace();
-
-    // then
-    expect(workspacesServiceMock.createWorkspace).toHaveBeenCalled();
-    expect(notificationMock.message).toHaveBeenCalled();
-  }));
-
-  it('Open workspace', async(() => {
-    // given
-    const workspaceLinks = {
-      links: {
-        open: "http://somewhere.com"
-      }
-    };
-    workspacesServiceMock.getWorkspaces.and.returnValue(Observable.of(expectedWorkspaces));
-    workspacesServiceMock.openWorkspace.and.returnValue(Observable.of(workspaceLinks));
-    const notificationAction = { name: "created" };
-    notificationMock.message.and.returnValue(Observable.of(notificationAction));
-    fixture.detectChanges();
-
-    // when
-    comp.openWorkspace();
-
-    // then
-    expect(workspacesServiceMock.openWorkspace).toHaveBeenCalled();
   }));
 });

@@ -1,13 +1,12 @@
 import { CodebasesItemActionsComponent } from './codebases-item-actions.component';
 import { Observable } from 'rxjs';
 import { Contexts } from 'ngx-fabric8-wit';
-import { Broadcaster, Notifications, NotificationType } from 'ngx-base';
+import { Broadcaster, Notifications } from 'ngx-base';
 import { CodebasesService } from '../services/codebases.service';
 import { GitHubService } from '../services/github.service';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { By } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormsModule} from '@angular/forms';
 import { WindowService } from '../services/window.service';
 import { WorkspacesService } from '../services/workspaces.service';
 import {
@@ -15,8 +14,10 @@ import {
   ComponentFixture,
   TestBed
 } from '@angular/core/testing';
+import { ContextsMock } from '../services/github.service.mock';
 
 describe('Codebases Item Actions Component', () => {
+  let contextsMock: any;
   let dialogMock: any;
   let gitHubServiceMock: any;
   let notificationMock: any;
@@ -27,6 +28,7 @@ describe('Codebases Item Actions Component', () => {
   let codebasesServiceMock: any;
 
   beforeEach(() => {
+    contextsMock = jasmine.createSpy('Contexts');
     gitHubServiceMock = jasmine.createSpy('GitHubService');
     dialogMock = jasmine.createSpyObj('IModalHost', ['open', 'close']);
     notificationMock = jasmine.createSpyObj('Notifications', ['message']);
@@ -41,6 +43,9 @@ describe('Codebases Item Actions Component', () => {
       providers: [
         {
           provide: Broadcaster, useValue: broadcasterMock
+        },
+        {
+          provide: Contexts, useClass: ContextsMock
         },
         {
           provide: WindowService, useValue: windowServiceMock
@@ -63,48 +68,6 @@ describe('Codebases Item Actions Component', () => {
     });
     fixture = TestBed.createComponent(CodebasesItemActionsComponent);
   });
-
-  it('Create And Open Workspace successfully', async(() => {
-    // given
-    let comp = fixture.componentInstance;
-    comp.codebase = { "id": "6f5b6738-170e-490e-b3bb-d10f56b587c8" };
-    const workspaceLinks = {
-      links: {
-        open: "http://somehwere.com"
-      }
-    };
-    workspacesServiceMock.createWorkspace.and.returnValue(Observable.of(workspaceLinks));
-    windowServiceMock.open.and.returnValue(new WindowService());
-    const notificationAction = { name: "created" };
-    notificationMock.message.and.returnValue(Observable.of(notificationAction));
-    broadcasterMock.broadcast.and.returnValue();
-    broadcasterMock.on.and.returnValue(Observable.of({ running: true }));
-    fixture.detectChanges();
-    // when
-    comp.createAndOpenWorkspace();
-    fixture.detectChanges();
-    // then
-    expect(notificationMock.message).toHaveBeenCalled();
-    expect(windowServiceMock.open).toHaveBeenCalled();
-    expect(broadcasterMock.broadcast).toHaveBeenCalled();
-  }));
-
-  it('Create And Open Workspace in error', async(() => {
-    // given
-    let comp = fixture.componentInstance;
-    comp.codebase = { "id": "6f5b6738-170e-490e-b3bb-d10f56b587c8" };
-    workspacesServiceMock.createWorkspace.and.returnValue(Observable.throw('ERROR'));
-    const notificationAction = { name: "ERROR" };
-    notificationMock.message.and.returnValue(Observable.of(notificationAction));
-    broadcasterMock.on.and.returnValue(Observable.of({ running: true }));
-    fixture.detectChanges();
-    // when
-    comp.createAndOpenWorkspace();
-    fixture.detectChanges();
-    // then
-    expect(notificationMock.message).toHaveBeenCalled();
-  }));
-
 
   it('Delete codebase successfully', async(() => {
     // given
