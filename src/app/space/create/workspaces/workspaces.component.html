@@ -32,4 +32,4 @@
 <!-- Modal window: Create Workspace -->
 <create-workspaces-dialog #createWorkspaceDialog
                           [reposMap]="reposByCodebase"
-                          (onCreated)="createWorkspacesToParent($event)"></create-workspaces-dialog>
+                          (onCreate)="createWorkspace($event)"></create-workspaces-dialog>

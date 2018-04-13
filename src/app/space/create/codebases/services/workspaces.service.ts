@@ -32,10 +32,11 @@ export class WorkspacesService {
    * @param codebaseId The ID associated with the given workspace
    * @returns {Observable<Codebase>}
    */
-  createWorkspace(codebaseId: string): Observable<WorkspaceLinks> {
-    let url = `${this.workspacesUrl}/${codebaseId}/create`;
+  createWorkspace(codebaseId: string, name: string, branch: string): Observable<WorkspaceLinks> {
+    let url = this.workspacesUrl + '/' + codebaseId + '/create';
+    let payload = JSON.stringify({ data: { attributes: { branch: branch }, name: name } });
     return this.http
-      .post(url, {}, { headers: this.headers })
+      .post(url, payload, { headers: this.headers })
       .retry(8) // che-starter timeout is 3 min -- 30 sec default request timeout is not enough
       .map(response => {
         return response.json() as WorkspaceLinks;

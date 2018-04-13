@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Http } from '@angular/http';
 
+import { ModalModule } from 'ngx-modal';
+
 import { BsDropdownConfig, BsDropdownModule, TabsModule, TooltipConfig, TooltipModule } from 'ngx-bootstrap';
 
 import { ToolbarModule } from 'patternfly-ng';
@@ -12,7 +14,6 @@ import { CodebaseDetailsComponent } from './codebase-details.component';
 
 import { CodebaseWorkspacesModule } from '../codebase-workspaces/codebase-workspaces.module';
 
-
 @NgModule({
   imports: [
     BsDropdownModule.forRoot(),
@@ -21,11 +22,13 @@ import { CodebaseWorkspacesModule } from '../codebase-workspaces/codebase-worksp
     CodebaseDeleteDialogModule,
     CodebaseDetailsRoutingModule,
     CodebaseWorkspacesModule,
+    ModalModule,
     TabsModule.forRoot(),
     ToolbarModule,
     TooltipModule.forRoot()
   ],
   declarations: [CodebaseDetailsComponent],
+  exports: [ ModalModule ],
   providers: [
     BsDropdownConfig,
     TooltipConfig

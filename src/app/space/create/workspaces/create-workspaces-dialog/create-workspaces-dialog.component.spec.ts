@@ -26,7 +26,7 @@ import { CreateWorkspacesDialogComponent } from './create-workspaces-dialog.comp
 @Component({
   template: `<create-workspaces-dialog #createWorkspacesDialog
                                        [reposMap]="reposByCodebase"
-                                       (onCreated)="createWorkspace($event)"></create-workspaces-dialog>`
+                                       (onCreate)="createWorkspace($event)"></create-workspaces-dialog>`
 })
 class TestHostComponent {
   @ViewChild('createWorkspacesDialog') createWorkspacesDialog: CreateWorkspacesDialogComponent;
@@ -200,7 +200,7 @@ describe(`CreateWorkspacesDialogComponent`, () => {
       });
 
       // todo
-      xit(`should raise 'onCreated' event on 'Create' button clicked`, () => {
+      xit(`should raise 'onCreate' event on 'Create' button clicked`, () => {
         const spy = spyOn(testHostComponent, 'createWorkspace');
 
         createButtonElement.triggerEventHandler('click', null);
@@ -214,6 +214,3 @@ describe(`CreateWorkspacesDialogComponent`, () => {
   });
 
 });
-
-/* Testing stand-alone component */
-// todo

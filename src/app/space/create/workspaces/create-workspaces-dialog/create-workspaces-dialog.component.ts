@@ -33,7 +33,7 @@ interface IRepositoryOption {
 export class CreateWorkspacesDialogComponent implements OnInit, OnDestroy {
 
   @Input() reposMap: Map<string, GitHubRepoDetails>;
-  @Output('onCreated') onCreated = new EventEmitter();
+  @Output('onCreate') onCreate = new EventEmitter();
   @ViewChild('createWorkspaceModal') createWorkspaceModal: IModalHost;
   @ViewChild('typeahead') typeahead: any;
   @ViewChild('emptyOption') emptyOption: ElementRef;
@@ -120,7 +120,7 @@ export class CreateWorkspacesDialogComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.onCreated.emit();
+    this.onCreate.emit({codebaseId: this.codebaseId, workspaceName: this.workspaceName, branch: this.branchName});
   }
 
   changeTypeaheadLoading(e: boolean): void {

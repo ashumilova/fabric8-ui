@@ -104,8 +104,4 @@ export class WorkspacesToolbarComponent implements OnInit, OnChanges {
   openCreateWorkspaceModal($event: Event): void {
     this.onOpenModal.emit($event);
   }
-
-  createWorkspacesToParent($event: Event): void {
-  }
-
 }
