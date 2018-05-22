@@ -11,13 +11,9 @@ import {
 } from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
 
-import { TypeaheadMatch } from 'ngx-bootstrap';
-import { Observable } from 'rxjs/Observable';
-
 import { IModalHost } from '../../../wizard/models/modal-host';
 import { GitHubRepoBranch, GitHubRepoDetails } from '../../codebases/services/github';
 import { GitHubService } from '../../codebases/services/github.service';
-import { WorkspacesService } from '../../codebases/services/workspaces.service';
 
 interface IRepositoryOption {
   codebaseId: string;
@@ -35,25 +31,20 @@ export class CreateWorkspacesDialogComponent implements OnInit, OnDestroy {
   @Input() reposMap: Map<string, GitHubRepoDetails>;
   @Output('onCreate') onCreate = new EventEmitter();
   @ViewChild('createWorkspaceModal') createWorkspaceModal: IModalHost;
-  @ViewChild('typeahead') typeahead: any;
   @ViewChild('emptyOption') emptyOption: ElementRef;
   @ViewChild('branchNameModel') branchNameModel: NgModel;
 
   repoOptions: IRepositoryOption[] = [];
-  workspaceName: string;
   codebaseId: string;
   branchName: string;
   repoFullName: string;
   branchesList: GitHubRepoBranch[];
-  branchesSource: Observable<GitHubRepoBranch[]>;
 
   constructor(
-    private gitHubService: GitHubService,
-    private workspacesService: WorkspacesService
+    private gitHubService: GitHubService
   ) { }
 
   ngOnInit() {
-    this.branchesSource = Observable.of([]);
   }
 
   ngOnDestroy() { }
@@ -79,11 +70,6 @@ export class CreateWorkspacesDialogComponent implements OnInit, OnDestroy {
     // update list of branches
     this.gitHubService.getRepoBranchesByFullName(fullName).subscribe(branchesList => {
       this.branchesList = branchesList;
-
-      this.branchesSource = Observable.create(observer => {
-        // runs on every search
-        observer.next(this.branchName);
-      }).mergeMap(token => this.getBranchesAsObservable(token));
     });
   }
 
@@ -120,32 +106,8 @@ export class CreateWorkspacesDialogComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.onCreate.emit({codebaseId: this.codebaseId, workspaceName: this.workspaceName, branch: this.branchName});
-  }
-
-  changeTypeaheadLoading(e: boolean): void {
-    const error = e === true
-      ? {branchesLoading: true}
-      : null;
-    this.branchNameModel.control.setErrors(error);
-  }
-
-  changeTypeaheadNoResults(e: boolean): void {
-    const error = e === true
-      ? {branchNotFound: true}
-      : null;
-    this.branchNameModel.control.setErrors(error);
-  }
-
-  typeaheadOnSelect(e: TypeaheadMatch): void { }
-
-  private getBranchesAsObservable(token: string): Observable<GitHubRepoBranch[]> {
-    const query = new RegExp(token, 'i');
-    return Observable.of(
-      this.branchesList.filter((branch: GitHubRepoBranch) => {
-        return query.test(branch.name);
-      })
-    );
+    this.onCreate.emit({codebaseId: this.codebaseId, branch: this.branchName});
+    this.createWorkspaceModal.close();
   }
 
   private disableEmptyOption(): void {

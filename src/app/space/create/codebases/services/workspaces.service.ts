@@ -30,9 +30,10 @@ export class WorkspacesService {
    * Create a workspace for given codebase ID
    *
    * @param codebaseId The ID associated with the given workspace
+   * @param branch the branch name
    * @returns {Observable<Codebase>}
    */
-  createWorkspace(codebaseId: string, name: string, branch: string): Observable<WorkspaceLinks> {
+  createWorkspace(codebaseId: string, branch: string): Observable<WorkspaceLinks> {
     let url = this.workspacesUrl + '/' + codebaseId + '/create';
     let payload = JSON.stringify({ data: { attributes: { branch: branch }, name: name } });
     return this.http
@@ -78,6 +79,34 @@ export class WorkspacesService {
       });
   }
 
+  deleteWorkspace(workspace: Workspace): Observable<void> {
+    let url = workspace.links.self;
+    this.headers.delete('Content-Type');
+    return this.http
+      .delete(url, { headers: this.headers })
+      .retry(8) // che-starter timeout is 3 min -- 30 sec default request timeout is not enough
+      .map(response => {
+        debugger;
+      })
+      .catch((error) => {
+        return this.handleError(error);
+      });
+  }
+
+  stopWorkspace(workspace: Workspace): Observable<void> {
+    let url = workspace.links.self;
+    this.headers.delete('Content-Type');
+    debugger;
+    return this.http
+      .delete(url)
+      .retry(8) // che-starter timeout is 3 min -- 30 sec default request timeout is not enough
+      .map(response => {
+        debugger;
+      })
+      .catch((error) => {
+        return this.handleError(error);
+      });
+  }
   /**
    * Open workspace associated with a codebase.
    *

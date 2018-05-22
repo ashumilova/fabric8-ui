@@ -184,10 +184,9 @@ describe(`CreateWorkspacesDialogComponent`, () => {
 
     });
 
-    describe(`and when 'Workspace Name', 'Codebase' and 'Branch Name' are set`, () => {
+    describe(`and when 'Codebase' and 'Branch Name' are set`, () => {
 
       beforeEach(async(() => {
-        createWorkspacesDialogComponent.workspaceName = 'test-workspace-name';
         createWorkspacesDialogComponent.codebaseId = testHostComponent.testCodebaseId;
         createWorkspacesDialogComponent.branchName = 'master';
         fixture.detectChanges();

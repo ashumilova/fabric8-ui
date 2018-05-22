@@ -219,8 +219,11 @@ export class WorkspacesComponent implements OnDestroy, OnInit {
   *
   */
   createWorkspace(data: any): void {
-    console.log(data);
-    this.workspacesService.createWorkspace(data.codebaseId, data.workspaceName, data.branch).subscribe();
+    this.workspacesService.createWorkspace(data.codebaseId, data.branch).subscribe(() => {
+      this.updateCodebases();
+    }, (error) => {
+      this.handleError('Failed to create workspace', NotificationType.DANGER);
+    });
   }
 
   /**

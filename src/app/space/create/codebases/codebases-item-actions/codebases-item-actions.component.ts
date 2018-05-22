@@ -26,7 +26,6 @@ export class CodebasesItemActionsComponent implements OnDestroy, OnInit {
   @ViewChild(ModalDirective) modal: ModalDirective;
 
   subscriptions: Subscription[] = [];
-  workspaceBusy: boolean = false;
   dialog: Dialog;
   contextPath: Observable<string>;
 

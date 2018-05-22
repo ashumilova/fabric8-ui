@@ -67,7 +67,7 @@ export class WorkspacesItemComponent implements OnDestroy, OnChanges, OnInit {
    */
   updateWorkspaceStatus(): void {
     if (this.workspace && this.workspace.attributes) {
-      this.workspaceStatus = this.workspace.attributes.description;
+      this.workspaceStatus = this.workspace.attributes.status;
     } else {
       this.workspaceStatus = '';
     }
@@ -77,14 +77,16 @@ export class WorkspacesItemComponent implements OnDestroy, OnChanges, OnInit {
    * Helper to update repo props.
    */
   updateBranch(): void {
+    if (this.workspace.relationships && this.workspace.relationships.codebase) {
+      this.branchName = this.workspace.relationships.codebase.meta.branch;
+    }
+
     if (!this.repo) {
       return;
     }
 
+    this.branchName = this.branchName || this.repo.default_branch;
     this.updated = +new Date(this.repo.updated_at);
-
-    // todo: dummy value, replace it
-    this.branchName = this.repo.default_branch;
 
     this.compareBranch();
   }
@@ -93,14 +95,19 @@ export class WorkspacesItemComponent implements OnDestroy, OnChanges, OnInit {
    * Compares default branches of current and parent repositories.
    */
   compareBranch(): void {
-    if (!this.repo.parent) {
-      this.branchAhead = null;
-      this.branchBehind = null;
+    this.branchAhead = null;
+    this.branchBehind = null;
+    let baseBranch, headBranch;
+    if (this.repo.parent) {
+      baseBranch = this.repo.parent.owner.login + ':' + this.repo.parent.default_branch;
+      headBranch = this.repo.default_branch;
+    } else if (this.repo.default_branch !== this.branchName) {
+      baseBranch = this.repo.default_branch,
+      headBranch = this.branchName;
+    } else {
       return;
     }
 
-    const baseBranch = this.repo.parent.owner.login + ':' + this.repo.parent.default_branch,
-      headBranch = this.repo.default_branch;
     this.subscriptions.push(
       this.gitHubService.getRepoBranchesComparisonByFullName(this.repo.full_name, baseBranch, headBranch)
         .subscribe((comparison: GitHubRepoComparison) => {
@@ -109,5 +116,4 @@ export class WorkspacesItemComponent implements OnDestroy, OnChanges, OnInit {
         })
     );
   }
-
 }
